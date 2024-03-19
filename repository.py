@@ -16,12 +16,11 @@ class UsersRepository:
             return user.id
 
     @classmethod
-    async def find_all(cls) -> list[Users]:
+    async def find_all(cls):
         async with new_session() as session:
             query = select(UsersTable)
             result = await session.execute(query)
             user_models = result.scalars().all()
-            user_schemas = [Users.model_validate(user_model) for user_model in user_models]
-            return user_schemas
+            return user_models
 
 

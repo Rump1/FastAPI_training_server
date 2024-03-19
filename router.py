@@ -19,6 +19,6 @@ async def add_user(
 
 
 @user_router.get("")
-async def get_users() -> list[Users]:
+async def get_users():
     users = await UsersRepository.find_all()
     return users
