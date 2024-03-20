@@ -68,7 +68,7 @@ class CallsAdd(BaseModel):
 
     city_id: id города, вторичный ключ к полю id таблицы Cities
     """
-    user_id: float
+    user_id: int
     duration: int
     cost: float
     city_id: str
