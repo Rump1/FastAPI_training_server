@@ -21,7 +21,7 @@ class ProvidersTable(Model):
     login: Mapped[str]
     password: Mapped[str]
 
-    clients: Mapped[list["ClientsTable"]] = relationship()
+    clients: Mapped[list["ClientsTable"]] = relationship(back_populates="provider")
 
 
 class ClientsTable(Model):
@@ -34,8 +34,8 @@ class ClientsTable(Model):
     INN: Mapped[str]
     address: Mapped[str]
 
-    provider: Mapped["ProvidersTable"] = relationship()
-    calls: Mapped[list["CallsTable"]] = relationship()
+    provider: Mapped["ProvidersTable"] = relationship(back_populates="clients")
+    calls: Mapped[list["CallsTable"]] = relationship(back_populates="client")
 
 
 class CallsTable(Model):
@@ -47,8 +47,8 @@ class CallsTable(Model):
     duration: Mapped[int]
     cost: Mapped[float]
 
-    client: Mapped["ClientsTable"] = relationship()
-    city: Mapped["CitiesTable"] = relationship()
+    client: Mapped["ClientsTable"] = relationship(back_populates="calls")
+    city: Mapped["CitiesTable"] = relationship(back_populates="calls")
 
 
 class CitiesTable(Model):
@@ -59,7 +59,7 @@ class CitiesTable(Model):
     daily_rate: Mapped[float]
     night_rate: Mapped[float]
 
-    calls: Mapped[list["CallsTable"]] = relationship()
+    calls: Mapped[list["CallsTable"]] = relationship(back_populates="city")
 
 
 async def create_tables():
