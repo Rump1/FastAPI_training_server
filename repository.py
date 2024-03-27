@@ -1,26 +1,26 @@
-from database import new_session, UsersTable
-from schemas import UsersAdd, Users
+from database import new_session, ProvidersTable
+from schemas import ProvidersAdd
 from sqlalchemy import select
 
 
-class UsersRepository:
+class ProvidersRepository:
     @classmethod
-    async def add_one(cls, data: UsersAdd) -> int:
+    async def add_one(cls, data: ProvidersAdd) -> int:
         async with new_session() as session:
-            user_dict = data.model_dump()
+            providers_dict = data.model_dump()
 
-            user = UsersTable(**user_dict)
-            session.add(user)
+            provider = ProvidersTable(**providers_dict)
+            session.add(provider)
             await session.flush()
             await session.commit()
-            return user.id
+            return provider.id
 
     @classmethod
     async def find_all(cls):
         async with new_session() as session:
-            query = select(UsersTable)
+            query = select(ProvidersTable)
             result = await session.execute(query)
-            user_models = result.scalars().all()
-            return user_models
+            provider_model = result.scalars().all()
+            return provider_model
 
 

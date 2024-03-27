@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from database import create_tables, delete_tables
-from router import user_router
+from router import providers_router
 
 
 @asynccontextmanager
@@ -14,4 +14,4 @@ async def lifespan(app: FastAPI):
     print("Выключение")
 
 app = FastAPI(lifespan=lifespan)
-app.include_router(user_router)
+app.include_router(providers_router)

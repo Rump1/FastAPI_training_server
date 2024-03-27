@@ -1,24 +1,24 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
-from repository import UsersRepository
-from schemas import UsersAdd, Users
+from repository import ProvidersRepository
+from schemas import ProvidersAdd
 
-user_router = APIRouter(
-    prefix="/users",
-    tags=["Users"]
+providers_router = APIRouter(
+    prefix="/providers",
+    tags=["Providers"]
 )
 
 
-@user_router.post("")
-async def add_user(
-        user: Annotated[UsersAdd, Depends()]
+@providers_router.post("")
+async def add_provider(
+        user: Annotated[ProvidersAdd, Depends()]
 ):
-    user_id = await UsersRepository.add_one(user)
-    return {"ok": True, "user_id": user_id}
+    provider_id = await ProvidersRepository.add_one(user)
+    return {"ok": True, "provider_id": provider_id}
 
 
-@user_router.get("")
-async def get_users():
-    users = await UsersRepository.find_all()
+@providers_router.get("")
+async def get_providers():
+    users = await ProvidersRepository.find_all()
     return users

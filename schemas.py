@@ -1,9 +1,9 @@
 from pydantic import BaseModel
 
 
-class UsersAdd(BaseModel):
+class ProvidersAdd(BaseModel):
     """
-    Класс, описывающий таблицу Users
+    Класс, описывающий таблицу Providers
     Обязательные аргументы:
 
     login: логин пользователя
@@ -14,10 +14,9 @@ class UsersAdd(BaseModel):
     password: str
 
 
-class Users(UsersAdd):
+class Providers(ProvidersAdd):
     """
-    Класс для работы с ОРМ с таблицей Users
-
+    Класс для работы с ОРМ с таблицей Providers
     Обязательные аргументы:
 
     id: id пользователя в таблице, первичный ключ
@@ -25,32 +24,34 @@ class Users(UsersAdd):
     id: int
 
 
-class PersonalAccountAdd(BaseModel):
+class ClientsAdd(BaseModel):
     """
-    Класс, описывающий таблицу PersonalAccount
+    Класс, описывающий таблицу Clients
     Обязательные аргументы:
 
-    balance: баланс пользователя
+    provider_id: id провайдера, вторичный ключ к полю id в таблице Providers
 
-    phone_number: номер телефона пользователя
+    balance: баланс клиента
 
-    INN: ИНН пользователя
+    phone_number: номер телефона клиента
 
-    address: адресс пользователя
+    INN: ИНН клиента
+
+    address: адресс клиента
     """
+    provider_id: int
     balance: float
     phone_number: str
     INN: str
     address: str
 
 
-class PersonalAccount(PersonalAccountAdd):
+class Clients(ClientsAdd):
     """
-    Класс для работы с ОРМ с таблицей PersonalAccount
-
+    Класс для работы с ОРМ с таблицей Clients
     Обязательные аргументы:
 
-    id: id пользователя в таблице, первичный ключ, вторичный ключ к полю id в таблице Users
+    id: id пользователя в таблице, первичный ключ
     """
     id: int
 
@@ -60,18 +61,18 @@ class CallsAdd(BaseModel):
     Класс, описывающий таблицу Calls
     Обязательные аргументы:
 
-    user_id: id пользователя, вторичный ключ к полю id в таблице Users
+    client_id: id клиента, вторичный ключ к полю id в таблице Clients
+
+    city_id: id города, вторичный ключ к полю id таблицы Cities
 
     duration: длительность звонка в секундах
 
     cost: стоимость звонка в рублях
-
-    city_id: id города, вторичный ключ к полю id таблицы Cities
     """
-    user_id: int
+    clients_id: int
+    city_id: str
     duration: int
     cost: float
-    city_id: str
 
 
 class Calls(CallsAdd):

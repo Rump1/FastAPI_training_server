@@ -1,6 +1,6 @@
 from typing import Annotated
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey
 
 
@@ -14,32 +14,41 @@ class Model(DeclarativeBase):
     pass
 
 
-class UsersTable(Model):
-    __tablename__ = "Users"
+class ProvidersTable(Model):
+    __tablename__ = "Providers"
 
     id: Mapped[intpk]
     login: Mapped[str]
     password: Mapped[str]
 
+    clients: Mapped[list["ClientsTable"]] = relationship()
 
-class PersonalAccountTable(Model):
-    __tablename__ = "PersonalAccount"
 
-    id: Mapped[int] = mapped_column(ForeignKey("Users.id", ondelete="CASCADE"), primary_key=True)
+class ClientsTable(Model):
+    __tablename__ = "Clients"
+
+    id: Mapped[intpk]
+    provider_id = mapped_column(ForeignKey("Providers.id", ondelete="CASCADE"))
     balance: Mapped[float]
     phone_number: Mapped[str]
     INN: Mapped[str]
     address: Mapped[str]
+
+    provider: Mapped["ProvidersTable"] = relationship()
+    calls: Mapped[list["CallsTable"]] = relationship()
 
 
 class CallsTable(Model):
     __tablename__ = "Calls"
 
     id: Mapped[intpk]
-    user_id: Mapped[int] = mapped_column(ForeignKey("Users.id", ondelete="CASCADE"))
+    provider_id: Mapped[int] = mapped_column(ForeignKey("Providers.id", ondelete="CASCADE"))
+    city_id: Mapped[str] = mapped_column(ForeignKey("Cities.id", ondelete="CASCADE"))
     duration: Mapped[int]
     cost: Mapped[float]
-    city_id: Mapped[str] = mapped_column(ForeignKey("Cities.id", ondelete="CASCADE"))
+
+    client: Mapped["CitiesTable"] = relationship()
+    city: Mapped["CitiesTable"] = relationship()
 
 
 class CitiesTable(Model):
@@ -49,6 +58,8 @@ class CitiesTable(Model):
     city: Mapped[str]
     daily_rate: Mapped[float]
     night_rate: Mapped[float]
+
+    calls: Mapped[list["CallsTable"]] = relationship()
 
 
 async def create_tables():
