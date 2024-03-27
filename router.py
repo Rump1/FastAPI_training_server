@@ -75,7 +75,7 @@ async def add_city(
         city: Annotated[CitiesAdd, Depends()]
 ):
     city_id = await CitiesRepository.add_one(city)
-    return {"ok": True, "ciries_id": city_id}
+    return {"ok": True, "cities_id": city_id}
 
 
 @cities_router.get("")

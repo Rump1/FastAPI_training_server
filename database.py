@@ -42,12 +42,12 @@ class CallsTable(Model):
     __tablename__ = "Calls"
 
     id: Mapped[intpk]
-    provider_id: Mapped[int] = mapped_column(ForeignKey("Providers.id", ondelete="CASCADE"))
+    client_id: Mapped[int] = mapped_column(ForeignKey("Clients.id", ondelete="CASCADE"))
     city_id: Mapped[str] = mapped_column(ForeignKey("Cities.id", ondelete="CASCADE"))
     duration: Mapped[int]
     cost: Mapped[float]
 
-    client: Mapped["CitiesTable"] = relationship()
+    client: Mapped["ClientsTable"] = relationship()
     city: Mapped["CitiesTable"] = relationship()
 
 

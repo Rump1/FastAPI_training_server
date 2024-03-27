@@ -69,7 +69,7 @@ class CallsAdd(BaseModel):
 
     cost: стоимость звонка в рублях
     """
-    clients_id: int
+    client_id: int
     city_id: str
     duration: int
     cost: float
