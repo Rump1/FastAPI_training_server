@@ -65,12 +65,15 @@ class CallsAdd(BaseModel):
 
     city_id: id города, вторичный ключ к полю id таблицы Cities
 
+    time_of_day: время суток, в которое совершен звонок
+
     duration: длительность звонка в секундах
 
     cost: стоимость звонка в рублях
     """
     client_id: int
-    city_id: str
+    city_id: int
+    time_of_day: str
     duration: int
     cost: float
 
@@ -96,10 +99,13 @@ class CitiesAdd(BaseModel):
     daily_rate: дневной тариф
 
     night_rate: ночной тариф
+
+    discount: скидка после 10-ти минут разговора
     """
     city: str
     daily_rate: float
     night_rate: float
+    discount: float
 
 
 class Cities(CitiesAdd):

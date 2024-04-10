@@ -1,4 +1,5 @@
 import uvicorn
+from database_filling import DataBaseFiller
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from database import create_tables, delete_tables
@@ -7,10 +8,11 @@ from router import providers_router, clients_router, cities_router, calls_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # await delete_tables()
-    # print("База очищенна")
-    # await create_tables()
-    # print("База создана")
+    await delete_tables()
+    print("База очищенна")
+    await create_tables()
+    print("База создана")
+    await DataBaseFiller.database_filling()
     yield
     print("Выключение")
 

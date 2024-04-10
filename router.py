@@ -54,8 +54,8 @@ calls_router = APIRouter(
 async def add_call(
         call: Annotated[CallsAdd, Depends()]
 ):
-    call_id = await CallsRepository.add_one(call)
-    return {"ok": True, "calls_id": call_id}
+    current_balance = await CallsRepository.add_one(call)
+    return {"ok": True, "current_balance": current_balance}
 
 
 @calls_router.get("")

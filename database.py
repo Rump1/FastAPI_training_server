@@ -43,7 +43,8 @@ class CallsTable(Model):
 
     id: Mapped[intpk]
     client_id: Mapped[int] = mapped_column(ForeignKey("Clients.id", ondelete="CASCADE"))
-    city_id: Mapped[str] = mapped_column(ForeignKey("Cities.id", ondelete="CASCADE"))
+    city_id: Mapped[int] = mapped_column(ForeignKey("Cities.id", ondelete="CASCADE"))
+    time_of_day: Mapped[str]
     duration: Mapped[int]
     cost: Mapped[float]
 
@@ -58,6 +59,7 @@ class CitiesTable(Model):
     city: Mapped[str]
     daily_rate: Mapped[float]
     night_rate: Mapped[float]
+    discount: Mapped[float]
 
     calls: Mapped[list["CallsTable"]] = relationship(back_populates="city")
 

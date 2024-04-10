@@ -44,18 +44,27 @@ class ClientsRepository:
             client_model = result.scalars().all()
             return client_model
 
+    @classmethod
+    async def update_client(cls, client_id: int, cost: float):
+        async with new_session() as session:
+            client = await session.get(ClientsTable, client_id)
+            client.balance = client.balance - cost
+            await session.flush()
+            await session.commit()
+            return client.balance
+
 
 class CallsRepository:
     @classmethod
     async def add_one(cls, data: CallsAdd) -> int:
         async with new_session() as session:
             calls_dict = data.model_dump()
-
             call = CallsTable(**calls_dict)
             session.add(call)
             await session.flush()
             await session.commit()
-            return call.id
+            current_balance = await ClientsRepository.update_client(call.client_id, call.cost)
+            return current_balance
 
     @classmethod
     async def find_all(cls):
