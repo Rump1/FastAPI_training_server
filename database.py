@@ -14,42 +14,36 @@ class Model(DeclarativeBase):
     pass
 
 
-class ProvidersTable(Model):
-    __tablename__ = "Providers"
+class AuthTable(Model):
+    __tablename__ = "Auth"
 
     id: Mapped[intpk]
-    login: Mapped[str]
+    username: Mapped[str]
     password: Mapped[str]
 
-    clients: Mapped[list["ClientsTable"]] = relationship(back_populates="provider")
 
-
-class ClientsTable(Model):
-    __tablename__ = "Clients"
+class OrganizationTable(Model):
+    __tablename__ = "Organization"
 
     id: Mapped[intpk]
-    provider_id = mapped_column(ForeignKey("Providers.id", ondelete="CASCADE"))
+    username: Mapped[str]
+    payment_account: Mapped[str]
     balance: Mapped[float]
-    phone_number: Mapped[str]
     INN: Mapped[str]
     address: Mapped[str]
 
-    provider: Mapped["ProvidersTable"] = relationship(back_populates="clients")
-    calls: Mapped[list["CallsTable"]] = relationship(back_populates="client")
+    employees: Mapped[list["EmployeeTable"]] = relationship(back_populates="organization")
 
 
-class CallsTable(Model):
-    __tablename__ = "Calls"
+class EmployeeTable(Model):
+    __tablename__ = "Employee"
 
     id: Mapped[intpk]
-    client_id: Mapped[int] = mapped_column(ForeignKey("Clients.id", ondelete="CASCADE"))
-    city_id: Mapped[int] = mapped_column(ForeignKey("Cities.id", ondelete="CASCADE"))
-    time_of_day: Mapped[str]
-    duration: Mapped[int]
-    cost: Mapped[float]
+    organization_id = mapped_column(ForeignKey("Organization.id", ondelete="CASCADE"))
+    phone_number: Mapped[str]
 
-    client: Mapped["ClientsTable"] = relationship(back_populates="calls")
-    city: Mapped["CitiesTable"] = relationship(back_populates="calls")
+    organization: Mapped["OrganizationTable"] = relationship(back_populates="employees")
+    calls: Mapped[list["CallsTable"]] = relationship(back_populates="employee")
 
 
 class CitiesTable(Model):
@@ -62,6 +56,20 @@ class CitiesTable(Model):
     discount: Mapped[float]
 
     calls: Mapped[list["CallsTable"]] = relationship(back_populates="city")
+
+
+class CallsTable(Model):
+    __tablename__ = "Calls"
+
+    id: Mapped[intpk]
+    employee_id: Mapped[int] = mapped_column(ForeignKey("Employee.id", ondelete="CASCADE"))
+    city_id: Mapped[int] = mapped_column(ForeignKey("Cities.id", ondelete="CASCADE"))
+    datetime: Mapped[str]
+    duration: Mapped[int]
+    cost: Mapped[float]
+
+    employee: Mapped["EmployeeTable"] = relationship(back_populates="calls")
+    city: Mapped["CitiesTable"] = relationship(back_populates="calls")
 
 
 async def create_tables():

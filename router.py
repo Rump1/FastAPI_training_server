@@ -1,67 +1,86 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
-from repository import ProvidersRepository, ClientsRepository, CallsRepository, CitiesRepository
-from schemas import ProvidersAdd, ClientsAdd, CallsAdd, CitiesAdd
+from repository import OrganizationRepository, EmployeeRepository, CallsRepository, CitiesRepository, AuthRepository
+from schemas import EmployeeAdd, CallsAdd, CitiesAdd, OrganizationAdd, AuthAdd
 
-providers_router = APIRouter(
-    prefix="/providers",
-    tags=["Providers"]
+
+auth_router = APIRouter(
+    prefix="/auth",
+    tags=["Auth"]
 )
 
 
-@providers_router.post("")
-async def add_provider(
-        provider: Annotated[ProvidersAdd, Depends()]
+@auth_router.post("")
+async def add_auth(
+        auth: Annotated[AuthAdd, Depends()]
 ):
-    provider_id = await ProvidersRepository.add_one(provider)
-    return {"ok": True, "provider_id": provider_id}
+    auth_id = await AuthRepository.add_one(auth)
+    return {"ok": True, "auth_id": auth_id}
 
 
-@providers_router.get("")
-async def get_providers():
-    providers = await ProvidersRepository.find_all()
-    return providers
+@auth_router.get("")
+async def get_auths():
+    auths = await AuthRepository.find_all()
+    return auths
 
 
-clients_router = APIRouter(
-    prefix="/clients",
-    tags=["Clients"]
+organization_router = APIRouter(
+    prefix="/organization",
+    tags=["Organization"]
 )
 
 
-@clients_router.post("")
-async def add_client(
-        client: Annotated[ClientsAdd, Depends()]
+@organization_router.post("")
+async def add_organization(
+        organization: Annotated[OrganizationAdd, Depends()]
 ):
-    client_id = await ClientsRepository.add_one(client)
-    return {"ok": True, "clients_id": client_id}
+    organization_id = await OrganizationRepository.add_one(organization)
+    return {"ok": True, "organization_id": organization_id}
 
 
-@clients_router.get("")
-async def get_clients():
-    clients = await ClientsRepository.find_all()
-    return clients
+@organization_router.get("")
+async def get_organizations():
+    organizations = await OrganizationRepository.find_all()
+    return organizations
+
+
+@organization_router.get("/{org_name}")
+async def get_organizations(org_name: str):
+    organization = await OrganizationRepository.find_org(org_name)
+    return organization
+
+
+employee_router = APIRouter(
+    prefix="/employee",
+    tags=["Employee"]
+)
+
+
+@employee_router.post("")
+async def add_employee(
+        employee: Annotated[EmployeeAdd, Depends()]
+):
+    employee_id = await EmployeeRepository.add_one(employee)
+    return {"ok": True, "employee_id": employee_id}
+
+
+@employee_router.get("")
+async def get_employee():
+    employees = await EmployeeRepository.find_all()
+    return employees
+
+
+@employee_router.get("/calls/{org_id}")
+async def get_employee_with_calls(org_id: int):
+    employees = await EmployeeRepository.find_organization_employees(org_id)
+    return employees
 
 
 calls_router = APIRouter(
     prefix="/calls",
     tags=["Calls"]
 )
-
-
-@calls_router.post("")
-async def add_call(
-        call: Annotated[CallsAdd, Depends()]
-):
-    current_balance = await CallsRepository.add_one(call)
-    return {"ok": True, "current_balance": current_balance}
-
-
-@calls_router.get("")
-async def get_calls():
-    calls = await CallsRepository.find_all()
-    return calls
 
 
 cities_router = APIRouter(
@@ -82,3 +101,17 @@ async def add_city(
 async def get_cities():
     cities = await CitiesRepository.find_all()
     return cities
+
+
+@calls_router.post("")
+async def add_call(
+        call: Annotated[CallsAdd, Depends()]
+):
+    current_balance = await CallsRepository.add_one(call)
+    return {"ok": True, "current_balance": current_balance}
+
+
+@calls_router.get("")
+async def get_calls():
+    calls = await CallsRepository.find_all()
+    return calls

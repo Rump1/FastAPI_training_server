@@ -1,14 +1,14 @@
 # Файл для заполнения БД
 
-from router import add_provider, add_city, add_client, add_call
-from schemas import ProvidersAdd, CitiesAdd, ClientsAdd, CallsAdd
+from router import add_organization, add_city, add_employee, add_call, add_auth
+from schemas import OrganizationAdd, CitiesAdd, EmployeeAdd, CallsAdd, AuthAdd
 import random
+from datetime import datetime
 
-# Providers:
-providers = {
-    "RTK": "99582bdd1cdaccd1a9a9251741f2bbcb4f66acf4ac36ba094138696958ed6a66",
-    "TTK": "2e75e7cf2e16cd690cab0f9af9eae8a12facec0d194ca09fb6642c6cc8b63799",
-    "DOM": "765308c19bcebac9f80ede96a985125a2c437066b9a03c5bb5bfe4407ef14c31"
+auths = {
+    "Horns&Hooves": "deaad792606928825c0bf85cd46e9edf",
+    "GoodBoys": "deaad792606928825c0bf85cd46e9edf",
+    "Loopa": "deaad792606928825c0bf85cd46e9edf"
 }
 
 cities = {
@@ -40,44 +40,50 @@ cities = {
 
 addresses = ["Пушкина", "Ленина", "Екатерининская", "Грибоедова", "Революции", "Цветочная", "Мира", "Космонавтов"]
 
-clients_amount = 20
+employee_amount = 20
 calls_amount = 100
 
 
 class DataBaseFiller:
     @classmethod
     async def database_filling(cls):
-        for provider in providers:
-            await add_provider(ProvidersAdd(login=provider, password=providers[provider]))
+        for auth in auths:
+            await add_auth(AuthAdd(username=auth, password=auths[auth]))
+
+        for auth in auths:
+            payment_account = str(random.randint(100000000000, 999999999999))
+            balance = round(random.random() * 1000 + 5000, 2)
+            INN = str(random.randint(100000000000, 999999999999))
+            address = random.choice(addresses) + " " + str(random.randint(1, 99))
+
+            await add_organization(OrganizationAdd(username=auth, payment_account=payment_account,
+                                                   balance=balance, INN=INN, address=address))
 
         for city in cities:
             await add_city(CitiesAdd(city=city, daily_rate=cities[city]["daily_rate"],
                                      night_rate=cities[city]["night_rate"], discount=cities[city]["discount"]))
 
-        for i in range(clients_amount):
-            provider_id = random.randint(1, 3)
-            balance = round(random.random() * 1000, 2)
+        for i in range(employee_amount):
+            organization_id = random.randint(1, 3)
             phone_number = "8912" + str(random.randint(1000000, 9999999))
-            INN = str(random.randint(100000000000, 999999999999))
-            address = random.choice(addresses) + " " + str(random.randint(1, 99))
 
-            await add_client(ClientsAdd(provider_id=provider_id, balance=balance,
-                                        phone_number=phone_number, INN=INN, address=address))
+            await add_employee(EmployeeAdd(organization_id=organization_id, phone_number=phone_number))
 
         for i in range(calls_amount):
-            client_id = random.randint(1, clients_amount)
+            employee_id = random.randint(1, employee_amount)
             city = random.choice(list(cities.keys()))
-            time_of_day = random.choice(["day", "night"])
+            format = "%Y-%m-%d %H:%M:%S"
+            date = datetime.fromtimestamp(datetime.now().timestamp() - random.randint(1, 100000))
             duration = random.randint(1, 500)
-            if time_of_day == "day":
+            if date.hour <= 20 & date.hour >= 8:
                 cost = duration * cities[city]["daily_rate"]
             else:
                 cost = duration * cities[city]["night_rate"]
             if duration >= 300:
                 cost = cost * (1 - cities[city]["discount"])
             cost = round(cost, 2)
-            await add_call(CallsAdd(client_id=client_id, city_id=list(cities.keys()).index(city) + 1,
-                                    time_of_day=time_of_day, duration=duration, cost=cost))
+            await add_call(CallsAdd(employee_id=employee_id, city_id=list(cities.keys()).index(city) + 1,
+                                    datetime=date.strftime(format), duration=duration, cost=cost))
 
 
         

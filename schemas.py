@@ -1,22 +1,22 @@
 from pydantic import BaseModel
 
 
-class ProvidersAdd(BaseModel):
+class AuthAdd(BaseModel):
     """
-    Класс, описывающий таблицу Providers
+    Класс, описывающий таблицу Auth
     Обязательные аргументы:
 
-    login: логин пользователя
+    username: логин пользователя
 
     password: пароль пользователя
     """
-    login: str
+    username: str
     password: str
 
 
-class Providers(ProvidersAdd):
+class Auth(AuthAdd):
     """
-    Класс для работы с ОРМ с таблицей Providers
+    Класс для работы с ОРМ с таблицей Auth
     Обязательные аргументы:
 
     id: id пользователя в таблице, первичный ключ
@@ -24,31 +24,31 @@ class Providers(ProvidersAdd):
     id: int
 
 
-class ClientsAdd(BaseModel):
+class OrganizationAdd(BaseModel):
     """
-    Класс, описывающий таблицу Clients
+    Класс, описывающий таблицу Organization
     Обязательные аргументы:
 
-    provider_id: id провайдера, вторичный ключ к полю id в таблице Providers
+    username: имя пользователя
 
-    balance: баланс клиента
+    payment_account: номер расчетного счета
 
-    phone_number: номер телефона клиента
+    balance: баланс
 
-    INN: ИНН клиента
+    INN: ИНН
 
-    address: адресс клиента
+    address: адресс
     """
-    provider_id: int
+    username: str
+    payment_account: str
     balance: float
-    phone_number: str
     INN: str
     address: str
 
 
-class Clients(ClientsAdd):
+class Organization(OrganizationAdd):
     """
-    Класс для работы с ОРМ с таблицей Clients
+    Класс для работы с ОРМ с таблицей Organization
     Обязательные аргументы:
 
     id: id пользователя в таблице, первичный ключ
@@ -56,35 +56,25 @@ class Clients(ClientsAdd):
     id: int
 
 
-class CallsAdd(BaseModel):
+class EmployeeAdd(BaseModel):
     """
-    Класс, описывающий таблицу Calls
+    Класс, описывающий таблицу Employee
     Обязательные аргументы:
 
-    client_id: id клиента, вторичный ключ к полю id в таблице Clients
+    organization_id: id организации, вторичный ключ к полю id в таблице Organization
 
-    city_id: id города, вторичный ключ к полю id таблицы Cities
-
-    time_of_day: время суток, в которое совершен звонок
-
-    duration: длительность звонка в секундах
-
-    cost: стоимость звонка в рублях
+    phone_number: номер телефона клиента
     """
-    client_id: int
-    city_id: int
-    time_of_day: str
-    duration: int
-    cost: float
+    organization_id: int
+    phone_number: str
 
 
-class Calls(CallsAdd):
+class Employee(EmployeeAdd):
     """
-    Класс для работы с ОРМ с таблицей Calls
-
+    Класс для работы с ОРМ с таблицей Employee
     Обязательные аргументы:
 
-    id: id звонка в таблице, первичный ключ
+    id: id пользователя в таблице, первичный ключ
     """
     id: int
 
@@ -110,10 +100,46 @@ class CitiesAdd(BaseModel):
 
 class Cities(CitiesAdd):
     """
-    Класс для работы с ОРМ с таблицей Users
+    Класс для работы с ОРМ с таблицей Cities
 
     Обязательные аргументы:
 
     id: id города в таблице, первичный ключ
     """
     id: int
+
+
+class CallsAdd(BaseModel):
+    """
+    Класс, описывающий таблицу Calls
+    Обязательные аргументы:
+
+    employee_id: id клиента, вторичный ключ к полю id в таблице Employee
+
+    city_id: id города, вторичный ключ к полю id таблицы Cities
+
+    datetime: дата, в которую совершен звонок
+
+    duration: длительность звонка в секундах
+
+    cost: стоимость звонка в рублях
+    """
+    employee_id: int
+    city_id: int
+    datetime: str
+    duration: int
+    cost: float
+
+
+class Calls(CallsAdd):
+    """
+    Класс для работы с ОРМ с таблицей Calls
+
+    Обязательные аргументы:
+
+    id: id звонка в таблице, первичный ключ
+    """
+    id: int
+
+
+
